@@ -1,8 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import time
 
 def web_scraper(urls, driver_path, save_path):
@@ -15,15 +12,15 @@ def web_scraper(urls, driver_path, save_path):
     Returns:
         None
     """
-    for url in urls:
+    for i in range(len(urls)):
         try:
-            print("Sto accedendo alla pagina " + url)
+            print("Sto accedendo alla pagina " + urls[i])
             # Verifica se esiste già un file con lo stesso nome
             try:
-                with open(save_path + '\\' + url + '.html', 'r', encoding='utf-8') as file:
+                with open(save_path + '\\' + str(i) + '.html', 'r', encoding='utf-8') as file:
                     pass
             except FileNotFoundError:
-                print(f'Il file {url}.html non esiste, lo sto creando...')
+                print(f'Il file {str(i)}.html non esiste, lo sto creando...')
 
                 # Configura il percorso del EdgeDriver
                 edge_driver_path = driver_path
@@ -35,7 +32,7 @@ def web_scraper(urls, driver_path, save_path):
                 driver = webdriver.Edge(service=service)
 
                 # Apri la pagina web
-                driver.get(url)
+                driver.get(urls[i])
 
                 # Attendi un po' di più per assicurarti che tutto il contenuto sia caricato
                 time.sleep(5)
@@ -44,14 +41,21 @@ def web_scraper(urls, driver_path, save_path):
                 page_source = driver.page_source
 
                 # Salva l'HTML in un file
-                with open(save_path + '\\' + url + '.html', 'w', encoding='utf-8') as file:
+                with open(save_path + '\\' + str(i) + '.html', 'w', encoding='utf-8') as file:
                     file.write(page_source)
 
                 # Chiudi il driver del browser
                 driver.quit()
             else:
-                print(f'Il file {url}.html esiste già')
+                print(f'Il file {str(i)}.html esiste già')
                 continue
 
         finally:
             print('--------------------------------------------------')
+
+# Esegui lo scraper
+if __name__ == '__main__':
+    urls = ['Inserisci qui gli URL delle pagine web da scaricare']
+    driver_path = 'Inserisci qui il percorso del file msedgedriver.exe'
+    save_path = 'Inserisci qui il percorso in cui salvare i file HTML'
+    web_scraper(urls, driver_path, save_path)
