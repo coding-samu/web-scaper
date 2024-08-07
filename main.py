@@ -1,3 +1,5 @@
+import os
+import sys
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 import time
@@ -17,16 +19,13 @@ def web_scraper(urls, driver_path, save_path):
             print("Sto accedendo alla pagina " + urls[i])
             # Verifica se esiste già un file con lo stesso nome
             try:
-                with open(save_path + '\\' + str(i) + '.html', 'r', encoding='utf-8') as file:
+                with open(os.path.join(save_path, f'{i}.html'), 'r', encoding='utf-8') as file:
                     pass
             except FileNotFoundError:
-                print(f'Il file {str(i)}.html non esiste, lo sto creando...')
-
-                # Configura il percorso del EdgeDriver
-                edge_driver_path = driver_path
+                print(f'Il file {i}.html non esiste, lo sto creando...')
 
                 # Configura il servizio del EdgeDriver
-                service = Service(edge_driver_path)
+                service = Service(driver_path)
 
                 # Inizializza il driver del browser
                 driver = webdriver.Edge(service=service)
@@ -41,13 +40,13 @@ def web_scraper(urls, driver_path, save_path):
                 page_source = driver.page_source
 
                 # Salva l'HTML in un file
-                with open(save_path + '\\' + str(i) + '.html', 'w', encoding='utf-8') as file:
+                with open(os.path.join(save_path, f'{i}.html'), 'w', encoding='utf-8') as file:
                     file.write(page_source)
 
                 # Chiudi il driver del browser
                 driver.quit()
             else:
-                print(f'Il file {str(i)}.html esiste già')
+                print(f'Il file {i}.html esiste già')
                 continue
 
         finally:
@@ -55,7 +54,12 @@ def web_scraper(urls, driver_path, save_path):
 
 # Esegui lo scraper
 if __name__ == '__main__':
-    urls = ['Inserisci qui gli URL delle pagine web da scaricare']
-    driver_path = 'Inserisci qui il percorso del file msedgedriver.exe'
-    save_path = 'Inserisci qui il percorso in cui salvare i file HTML'
+    if len(sys.argv) != 4:
+        print("Usage: python main.py <driver_path> <save_path> <url1,url2,...>")
+        sys.exit(1)
+
+    driver_path = sys.argv[1]
+    save_path = sys.argv[2]
+    urls = sys.argv[3].split(',')
+
     web_scraper(urls, driver_path, save_path)
