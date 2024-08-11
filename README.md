@@ -1,4 +1,4 @@
-# web-scaper
+# Python Web Scaper per Windows
 Web scraper scritto in python per Windows utilizzando msedgedriver.exe
 
 Esempio di utilizzo:
